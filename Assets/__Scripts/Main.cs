@@ -2,8 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System;
+using System.Linq;
+using UnityEngine.UI;
 
-public class Main : MonoBehaviour {
+
+public class Main : MonoBehaviour 
+{
 
     static public Main S; // A singleton for Main
     static Dictionary<WeaponType, WeaponDefinition> WEAP_DICT;
@@ -20,6 +25,7 @@ public class Main : MonoBehaviour {
     };
 
     private BoundsCheck bndCheck;
+    
 
     public void ShipDestroyed( Enemy e)
     {
@@ -91,28 +97,75 @@ public class Main : MonoBehaviour {
 
     public void Restart()
     {
-        // Reload _Scene_0 to restart the game
+       
         SceneManager.LoadScene("_Scene_0");
     }
-    ///<summary>
-    ///Static function that gets a WeaponDefinition from the WEAP_DICT static
-    ///protected field of the main class.
-    /// </summary>
-    /// <returns>The WeaponDefinition or, if there is no WeaponDefinition with
-    /// the WeaponType passed in, returns a new WeaponDefinition with a
-    /// WeaponType of none..</returns>
-    /// <param name="wt">The WeaponType of the desired WeaponDefinition</param>
+    
     static public WeaponDefinition GetWeaponDefinition(WeaponType wt)
     {
-        // Check to make sure that the key exists in the Dictionary
-        // Attempting to retrieve a key that didn't exist would throw an error,
-        // so the following if statement is important.
+        
         if (WEAP_DICT.ContainsKey(wt))
         {
             return (WEAP_DICT[wt]);
         }
-        // This returns a new WeaponDefinition with a type of WeaponType.none,
-        // which means it has failed to find the right WeaponDefinition
+        
         return new WeaponDefinition();
     }
+  
+
+ 
+    public class WaveEnemy
+    {
+        public int Amount;
+        public GameObject Type;
+    }
+
+    
+    public class Wave
+    {
+        public List<WaveEnemy> Enemy;
+    }
+
+    public class Spawner
+    {
+        public List<Wave> Waves;
+        public int CurrentWave = 0;
+
+        void CreateNextEnemyWave()
+        {
+            var wave = Waves.ElementAtOrDefault(CurrentWave);
+
+            if (wave != null)
+            {
+                CreateEnemiesFor(wave);
+                CurrentWave++;
+            }
+        }
+
+        void CreateEnemiesFor(Wave wave)
+        {
+            if (!wave.Enemy.Any()) return;
+
+            foreach (var enemy in wave.Enemy)
+            {
+                for (int i = 0; i < enemy.Amount; i++)
+                {
+                    Instantiate(enemy.Type, Vector3.zero, Quaternion.identity);
+                }
+            }
+        }
+
+        void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Space)) CreateNextEnemyWave();
+        }
+    
+
+ 
+    }
+
 }
+
+
+
+///
