@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System;
+
 using System.Linq;
 using UnityEngine.UI;
 
 
-public class Main : MonoBehaviour 
-{
+public class Main : MonoBehaviour {
 
     static public Main S; // A singleton for Main
     static Dictionary<WeaponType, WeaponDefinition> WEAP_DICT;
@@ -19,13 +18,14 @@ public class Main : MonoBehaviour
     public float enemyDefaultPadding = 1.5f; // Padding for position
     public WeaponDefinition[] weaponDefinitions;
     public GameObject prefabPowerUp;
+    public Spawner spawner; 
     public WeaponType[] powerUpFrequency = new WeaponType[]
     {
         WeaponType.blaster, WeaponType.blaster, WeaponType.spread, WeaponType.shield
     };
 
     private BoundsCheck bndCheck;
-    
+  
 
     public void ShipDestroyed( Enemy e)
     {
@@ -112,20 +112,24 @@ public class Main : MonoBehaviour
         return new WeaponDefinition();
     }
   
-
- 
+/// <summary>
+///  Enemy wave guess
+///  
+/// </summary>
+   
     public class WaveEnemy
     {
         public int Amount;
         public GameObject Type;
     }
 
-    
+    [System.Serializable]
     public class Wave
     {
         public List<WaveEnemy> Enemy;
     }
 
+    [System.Serializable]
     public class Spawner
     {
         public List<Wave> Waves;
@@ -151,6 +155,7 @@ public class Main : MonoBehaviour
                 for (int i = 0; i < enemy.Amount; i++)
                 {
                     Instantiate(enemy.Type, Vector3.zero, Quaternion.identity);
+                  
                 }
             }
         }
@@ -159,13 +164,14 @@ public class Main : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space)) CreateNextEnemyWave();
         }
-    
-
- 
     }
 
+   
 }
 
 
 
-///
+/// list varioavble publicv - set waves in inspector (5 waves)
+/// inside the enemy report score value back to the main class ( in enemy script)
+/// implement scoring
+///   GameObject.tGo = 
