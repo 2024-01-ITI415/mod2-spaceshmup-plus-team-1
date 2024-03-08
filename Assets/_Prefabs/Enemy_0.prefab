@@ -291,9 +291,9 @@ MonoBehaviour:
   score: 100
   showDamageDuration: 0.1
   powerUpDropChance: 0.35
-  ProjectileEnemyPrefab: {fileID: 1899541879965282, guid: 9b129995a54b6134c8b276915790a9e7,
+  projectilePrefab: {fileID: 1899541879965282, guid: 9b129995a54b6134c8b276915790a9e7,
     type: 3}
-  shotInterval: 3
+  projectileSpeed: 10
   originalColors: []
   materials: []
   showingDamage: 0

@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour {
+public class Enemy : MonoBehaviour
+{
 
     [Header("Set in Inspector: Enemy")]
     public float speed = 10f; // The speed in m/s
@@ -11,8 +12,9 @@ public class Enemy : MonoBehaviour {
     public int score = 100; // Points earned for destroying this
     public float showDamageDuration = 0.1f; // # seconds to show damage
     public float powerUpDropChance = 1f; // Chance to drop a power-up
-    public GameObject ProjectileEnemyPrefab; // Assign this in the Inspector
-    public float shotInterval = 1f; // Time between shots
+    public GameObject projectilePrefab; // Add
+    public float projectileSpeed = 10; // Add
+
 
     [Header("Set Dynamically: Enemy")]
     public Color[] originalColors;
@@ -20,7 +22,6 @@ public class Enemy : MonoBehaviour {
     public bool showingDamage = false;
     public float damageDoneTime; // Time to stop showing damage
     public bool notifiedOfDestruction = false; // Will be used later
-    private float shotTimer;
 
     protected BoundsCheck bndCheck;
 
@@ -30,11 +31,10 @@ public class Enemy : MonoBehaviour {
         // Get materials and colors for this GameObject and its children
         materials = Utils.GetAllMaterials(gameObject);
         originalColors = new Color[materials.Length];
-        for (int i=0; i<materials.Length; i++)
+        for (int i = 0; i < materials.Length; i++)
         {
             originalColors[i] = materials[i].color;
         }
-        shotTimer = shotInterval;
     }
 
     // This is a property: A method that acts like a field
@@ -54,7 +54,7 @@ public class Enemy : MonoBehaviour {
     {
         Move();
 
-        if(showingDamage && Time.time > damageDoneTime)
+        if (showingDamage && Time.time > damageDoneTime)
         {
             UnShowDamage();
         }
@@ -64,14 +64,6 @@ public class Enemy : MonoBehaviour {
             // We're off the bottom, so destroy this GameObject
             Destroy(gameObject);
         }
-
-        // Shooting logic
-        shotTimer -= Time.deltaTime;
-        if (shotTimer <= 0)
-        {
-            Fire();
-            shotTimer = shotInterval; // Reset the timer
-        }
     }
 
     public virtual void Move()
@@ -79,6 +71,24 @@ public class Enemy : MonoBehaviour {
         Vector3 tempPos = pos;
         tempPos.y -= speed * Time.deltaTime;
         pos = tempPos;
+    }
+
+    public void FireProjectiles()
+    {
+        Debug.Log("Firing Projectiles"); // Add this line to check if the method is called
+
+        if (projectilePrefab != null)
+        {
+            GameObject leftProjectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
+            leftProjectile.tag = "ProjectileEnemy"; // Make sure the tag is set correctly
+            leftProjectile.GetComponent<Rigidbody>().velocity = new Vector3(-projectileSpeed, 0, 0);
+
+            GameObject rightProjectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
+            rightProjectile.tag = "ProjectileEnemy"; // Make sure the tag is set correctly
+            rightProjectile.GetComponent<Rigidbody>().velocity = new Vector3(projectileSpeed, 0, 0);
+
+            Debug.Log("Projectiles Instantiated"); // Add this line to check if projectiles are instantiated
+        }
     }
 
     private void OnCollisionEnter(Collision coll)
@@ -99,7 +109,7 @@ public class Enemy : MonoBehaviour {
                 ShowDamage();
                 // Get the damage amount from the Main WEAP_DICT
                 health -= Main.GetWeaponDefinition(p.type).damageOnHit;
-                if(health <= 0)
+                if (health <= 0)
                 {
                     // Tell the Main singleton that this ship was destroyed
                     if (!notifiedOfDestruction)
@@ -119,27 +129,6 @@ public class Enemy : MonoBehaviour {
         }
     }
 
-    void Fire()
-    {
-        // Number of projectiles in the shotgun blast
-        int projectileCount = 5;
-
-        // Angle between each projectile in degrees
-        float spreadAngle = 10f;
-
-        // Calculate the starting angle for the first projectile
-        float startAngle = -spreadAngle * (projectileCount - 1) / 2;
-
-        for (int i = 0; i < projectileCount; i++)
-        {
-            // Calculate the rotation for this projectile
-            Quaternion projectileRotation = Quaternion.Euler(0, 0, startAngle + spreadAngle * i);
-
-            // Instantiate the projectile with the calculated rotation
-            Instantiate(ProjectileEnemyPrefab, transform.position, projectileRotation);
-        }
-    }
-
     void ShowDamage()
     {
         foreach (Material m in materials)
@@ -152,7 +141,7 @@ public class Enemy : MonoBehaviour {
 
     void UnShowDamage()
     {
-        for (int i=0; i<materials.Length; i++)
+        for (int i = 0; i < materials.Length; i++)
         {
             materials[i].color = originalColors[i];
         }

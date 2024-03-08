@@ -29,6 +29,7 @@ public class Enemy_4 : Enemy {
     private Vector3 p0, p1; // The two points to interpolate
     private float timeStart; // Birth time for this Enemy_4
     private float duration = 4; // Duration of movement
+    private bool partDestroyed = false;
 
     private void Start()
     {
@@ -68,8 +69,12 @@ public class Enemy_4 : Enemy {
     {
         // This completely overrides Enemy.Move() with a linear interpolation
         float u = (Time.time - timeStart) / duration;
-
-        if (u >= 1)
+        if (partDestroyed)
+        {
+            Vector3 direction = (Hero.S.transform.position - transform.position).normalized;
+            pos += direction * speed * Time.deltaTime;
+        }
+        else if (u >= 1)
         {
             InitMovement();
             u = 0;
@@ -178,6 +183,7 @@ public class Enemy_4 : Enemy {
                 {
                     // Instead of destroying this enemy, disable the damaged part
                     prtHit.go.SetActive(false);
+                    partDestroyed = true; // Set the flag to true//
                 }
                 // Check to see if the whole ship is destroyed
                 bool allDestroyed = true; // Assume it is destroyed

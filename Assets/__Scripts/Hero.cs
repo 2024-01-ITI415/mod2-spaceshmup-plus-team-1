@@ -87,6 +87,11 @@ public class Hero : MonoBehaviour {
             shieldLevel--;
             Destroy(go);
         }
+        else if (go.tag == "ProjectileEnemy")
+        {
+            shieldLevel--;
+            Destroy(go);
+        }
         else if (go.tag == "PowerUp")
         {
             // If the shield was triggered by a PowerUp
