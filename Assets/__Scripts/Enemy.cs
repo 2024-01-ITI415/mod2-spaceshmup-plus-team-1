@@ -69,7 +69,7 @@ public class Enemy : MonoBehaviour {
         shotTimer -= Time.deltaTime;
         if (shotTimer <= 0)
         {
-            Shoot();
+            Fire();
             shotTimer = shotInterval; // Reset the timer
         }
     }
@@ -119,7 +119,7 @@ public class Enemy : MonoBehaviour {
         }
     }
 
-    void Shoot()
+    void Fire()
     {
         // Number of projectiles in the shotgun blast
         int projectileCount = 5;
