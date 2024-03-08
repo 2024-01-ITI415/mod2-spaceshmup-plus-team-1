@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -31,10 +31,10 @@ public class WeaponDefinition
     public Color color = Color.white; // Color of Collar & power-up
     public GameObject projectilePrefab; // Prefab for projectiles
     public Color projectileColor = Color.white;
-    public float damageOnHit = 0; // Amount of damage caused
-    public float continuousDamage = 0; // Damage per second (Laser)
+    public float damageOnHit = 20; // Amount of damage caused
+    public float continuousDamage = 20; // Damage per second (Laser)
     public float delayBetweenShots = 0;
-    public float velocity = 20; // Speed of projectiles
+    public float velocity = 25; // Speed of projectiles
 }
 public class Weapon : MonoBehaviour {
     static public Transform PROJECTILE_ANCHOR;
@@ -120,6 +120,15 @@ public class Weapon : MonoBehaviour {
             case WeaponType.blaster:
                 p = MakeProjectile();
                 p.rigid.velocity = vel;
+
+                p = MakeProjectile();
+                p.transform.rotation = Quaternion.AngleAxis(-50, Vector3.back);
+                p.rigid.velocity = p.transform.rotation * vel;
+
+                p = MakeProjectile();
+                p.transform.rotation = Quaternion.AngleAxis(50, Vector3.back);
+                p.rigid.velocity = p.transform.rotation * vel;
+
                 break;
 
             case WeaponType.spread:
@@ -130,6 +139,15 @@ public class Weapon : MonoBehaviour {
                 p.rigid.velocity = p.transform.rotation * vel;
                 p = MakeProjectile(); // Make left Projectile
                 p.transform.rotation = Quaternion.AngleAxis(-10, Vector3.back);
+                p.rigid.velocity = p.transform.rotation * vel;
+                
+                
+                p = MakeProjectile(); // Make another Projectile
+                p.transform.rotation = Quaternion.AngleAxis(-15, Vector3.back);
+                p.rigid.velocity = p.transform.rotation * vel;
+
+                p = MakeProjectile(); // Make another Projectile
+                p.transform.rotation = Quaternion.AngleAxis(15, Vector3.back);
                 p.rigid.velocity = p.transform.rotation * vel;
                 break;
         }
