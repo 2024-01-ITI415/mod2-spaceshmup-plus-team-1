@@ -148,7 +148,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rigid: {fileID: 0}
-  _type: 0
+  _type: 1
 --- !u!114 &114414417478664330
 MonoBehaviour:
   m_ObjectHideFlags: 0

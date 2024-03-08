@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
-{
+public class Enemy : MonoBehaviour {
 
     [Header("Set in Inspector: Enemy")]
     public float speed = 10f; // The speed in m/s
@@ -12,7 +11,7 @@ public class Enemy : MonoBehaviour
     public int score = 100; // Points earned for destroying this
     public float showDamageDuration = 0.1f; // # seconds to show damage
     public float powerUpDropChance = 1f; // Chance to drop a power-up
-    public GameObject projectileEnemyPrefab; // Assign this in the Inspector
+    public GameObject ProjectileEnemyPrefab; // Assign this in the Inspector
     public float shotInterval = 1f; // Time between shots
 
     [Header("Set Dynamically: Enemy")]
@@ -31,7 +30,7 @@ public class Enemy : MonoBehaviour
         // Get materials and colors for this GameObject and its children
         materials = Utils.GetAllMaterials(gameObject);
         originalColors = new Color[materials.Length];
-        for (int i = 0; i < materials.Length; i++)
+        for (int i=0; i<materials.Length; i++)
         {
             originalColors[i] = materials[i].color;
         }
@@ -55,7 +54,7 @@ public class Enemy : MonoBehaviour
     {
         Move();
 
-        if (showingDamage && Time.time > damageDoneTime)
+        if(showingDamage && Time.time > damageDoneTime)
         {
             UnShowDamage();
         }
@@ -100,7 +99,7 @@ public class Enemy : MonoBehaviour
                 ShowDamage();
                 // Get the damage amount from the Main WEAP_DICT
                 health -= Main.GetWeaponDefinition(p.type).damageOnHit;
-                if (health <= 0)
+                if(health <= 0)
                 {
                     // Tell the Main singleton that this ship was destroyed
                     if (!notifiedOfDestruction)
@@ -122,8 +121,23 @@ public class Enemy : MonoBehaviour
 
     void Shoot()
     {
-        GameObject leftProjectile = Instantiate(projectileEnemyPrefab, transform.position + Vector3.left, Quaternion.identity);
-        GameObject rightProjectile = Instantiate(projectileEnemyPrefab, transform.position + Vector3.right, Quaternion.identity);
+        // Number of projectiles in the shotgun blast
+        int projectileCount = 5;
+
+        // Angle between each projectile in degrees
+        float spreadAngle = 10f;
+
+        // Calculate the starting angle for the first projectile
+        float startAngle = -spreadAngle * (projectileCount - 1) / 2;
+
+        for (int i = 0; i < projectileCount; i++)
+        {
+            // Calculate the rotation for this projectile
+            Quaternion projectileRotation = Quaternion.Euler(0, 0, startAngle + spreadAngle * i);
+
+            // Instantiate the projectile with the calculated rotation
+            Instantiate(ProjectileEnemyPrefab, transform.position, projectileRotation);
+        }
     }
 
     void ShowDamage()
@@ -138,7 +152,7 @@ public class Enemy : MonoBehaviour
 
     void UnShowDamage()
     {
-        for (int i = 0; i < materials.Length; i++)
+        for (int i=0; i<materials.Length; i++)
         {
             materials[i].color = originalColors[i];
         }

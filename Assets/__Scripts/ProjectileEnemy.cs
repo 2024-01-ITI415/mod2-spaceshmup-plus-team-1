@@ -10,9 +10,12 @@ public class ProjectileEnemy : MonoBehaviour
 
     [Header("Set Dynamically")]
     public Rigidbody rigid;
-    public Vector3 direction = Vector3.left; // Default direction is left
+    public Vector3 direction = Vector3.down; // Default direction is down
     [SerializeField]
     private WeaponType _type;
+
+    [Header("Set in Inspector")]
+    public float speed = 20f; // Speed of the projectile
 
     public WeaponType type
     {
@@ -35,13 +38,17 @@ public class ProjectileEnemy : MonoBehaviour
 
     private void Update()
     {
-        if (bndCheck.offUp)
+        if (bndCheck != null && bndCheck.offUp)
         {
+            Debug.Log("Projectile is off-screen. Destroying.");
             Destroy(gameObject);
         }
-
+        else
+        {
+            transform.position += direction * speed * Time.deltaTime;
+        }
         // Move the projectile in the specified direction
-        transform.position += direction * Time.deltaTime;
+
     }
 
     public void SetType(WeaponType eType)
@@ -56,8 +63,8 @@ public class ProjectileEnemy : MonoBehaviour
         GameObject otherGO = coll.gameObject;
         if (otherGO.tag == "Hero")
         {
-            // Damage the hero
-            // Add logic to damage the hero here
+            // Add logic to handle the hero's destruction or damage
+            Destroy(otherGO); // Destroy the hero GameObject
 
             Destroy(gameObject); // Destroy the projectile
         }
