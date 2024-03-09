@@ -103,6 +103,12 @@ public class Enemy : MonoBehaviour
                     int currentScore = int.Parse(scoreGT.text);
                     currentScore += score;
                     scoreGT.text = currentScore.ToString();
+                    // tried to do High Score But is was giving me issues
+
+                   // if (score > HighScore.score)
+                   // {
+                  //      HighScore.score = score;
+                  //  }
 
                     // Tell the Main singleton that this ship was destroyed
                     if (!notifiedOfDestruction)
@@ -121,6 +127,8 @@ public class Enemy : MonoBehaviour
                 print("Enemy hit by non-ProjectileHero: " + otherGO.name);
                 break;
         }
+
+
 
        
     }
