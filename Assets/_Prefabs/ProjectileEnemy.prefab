@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 23083059134325504}
   - component: {fileID: 65667506912150032}
   - component: {fileID: 54420238815504536}
+  - component: {fileID: -1118721807488412652}
   m_Layer: 11
   m_Name: ProjectileEnemy
   m_TagString: ProjectileEnemy
@@ -129,7 +130,20 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 0
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 120
   m_CollisionDetection: 1
+--- !u!114 &-1118721807488412652
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1899541879965282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdd4d18902b94ad4fadd767eb4fd2403, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lifetime: 10

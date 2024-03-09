@@ -291,9 +291,10 @@ MonoBehaviour:
   score: 100
   showDamageDuration: 0.1
   powerUpDropChance: 0.5
-  projectileEnemyPrefab: {fileID: 0}
-  shotInterval: 1
-  originalColors: []
+  projectilePrefab: {fileID: 0}
+  projectileSpeed: 10
+  originalColors:
+  - {r: 0.38679248, g: 0.21310076, b: 0.21310076, a: 0}
   materials: []
   showingDamage: 1
   damageDoneTime: 0

@@ -75,19 +75,19 @@ public class Enemy : MonoBehaviour
 
     public void FireProjectiles()
     {
-        Debug.Log("Firing Projectiles"); // Add this line to check if the method is called
+        Debug.Log("Firing Projectiles");
 
         if (projectilePrefab != null)
         {
             GameObject leftProjectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
-            leftProjectile.tag = "ProjectileEnemy"; // Make sure the tag is set correctly
+            leftProjectile.tag = "ProjectileEnemy"; 
             leftProjectile.GetComponent<Rigidbody>().velocity = new Vector3(-projectileSpeed, 0, 0);
 
             GameObject rightProjectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
-            rightProjectile.tag = "ProjectileEnemy"; // Make sure the tag is set correctly
+            rightProjectile.tag = "ProjectileEnemy"; 
             rightProjectile.GetComponent<Rigidbody>().velocity = new Vector3(projectileSpeed, 0, 0);
 
-            Debug.Log("Projectiles Instantiated"); // Add this line to check if projectiles are instantiated
+            Debug.Log("Projectiles Instantiated");
         }
     }
 

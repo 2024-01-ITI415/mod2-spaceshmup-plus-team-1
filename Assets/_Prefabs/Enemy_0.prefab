@@ -296,7 +296,7 @@ MonoBehaviour:
   projectileSpeed: 10
   originalColors: []
   materials: []
-  showingDamage: 0
+  showingDamage: 1
   damageDoneTime: 0
   notifiedOfDestruction: 0
 --- !u!114 &114326274758462888

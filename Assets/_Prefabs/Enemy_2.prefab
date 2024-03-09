@@ -82,11 +82,11 @@ MonoBehaviour:
   score: 200
   showDamageDuration: 0.1
   powerUpDropChance: 0.5
-  projectileEnemyPrefab: {fileID: 0}
-  shotInterval: 1
+  projectilePrefab: {fileID: 0}
+  projectileSpeed: 10
   originalColors: []
   materials: []
-  showingDamage: 0
+  showingDamage: 1
   damageDoneTime: 0
   notifiedOfDestruction: 0
   sinEccentricity: 0.6
@@ -107,7 +107,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radius: 3
-  keepOnScreen: 0
+  keepOnScreen: 1
   isOnScreen: 1
   camWidth: 0
   camHeight: 0
