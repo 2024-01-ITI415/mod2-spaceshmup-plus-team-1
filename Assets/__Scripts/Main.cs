@@ -114,7 +114,7 @@ public class Main : MonoBehaviour {
   
 /// <summary>
 ///  Enemy wave guess
-///  
+///  attempt on a wave
 /// </summary>
    
     public class WaveEnemy

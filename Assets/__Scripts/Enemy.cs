@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class Enemy : MonoBehaviour {
+public class Enemy : MonoBehaviour 
+{
 
     [Header("Set in Inspector: Enemy")]
     public float speed = 10f; // The speed in m/s
@@ -18,8 +20,10 @@ public class Enemy : MonoBehaviour {
     public bool showingDamage = false;
     public float damageDoneTime; // Time to stop showing damage
     public bool notifiedOfDestruction = false; // Will be used later
+    public Text scoreGT;
 
     protected BoundsCheck bndCheck;
+
 
     private void Awake()
     {
@@ -44,6 +48,12 @@ public class Enemy : MonoBehaviour {
         {
             this.transform.position = value;
         }
+    }
+    void Start()
+    {
+        GameObject scoreGO = GameObject.Find("ScoreCounter");//
+        scoreGT = scoreGO.GetComponent<Text>(); // 
+        scoreGT.text = "0";//
     }
 
     void Update()
@@ -87,14 +97,20 @@ public class Enemy : MonoBehaviour {
                 ShowDamage();
                 // Get the damage amount from the Main WEAP_DICT
                 health -= Main.GetWeaponDefinition(p.type).damageOnHit;
-                if(health <= 0)
+                if (health <= 0)
                 {
+                    // Update the score before destroying the enemy
+                    int currentScore = int.Parse(scoreGT.text);
+                    currentScore += score;
+                    scoreGT.text = currentScore.ToString();
+
                     // Tell the Main singleton that this ship was destroyed
                     if (!notifiedOfDestruction)
                     {
                         Main.S.ShipDestroyed(this);
                     }
                     notifiedOfDestruction = true;
+
                     // Destroy this enemy
                     Destroy(this.gameObject);
                 }
@@ -105,6 +121,8 @@ public class Enemy : MonoBehaviour {
                 print("Enemy hit by non-ProjectileHero: " + otherGO.name);
                 break;
         }
+
+       
     }
 
     void ShowDamage()
