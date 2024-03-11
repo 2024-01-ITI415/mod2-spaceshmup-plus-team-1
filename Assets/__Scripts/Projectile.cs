@@ -6,6 +6,7 @@ public class Projectile : MonoBehaviour {
 
     private BoundsCheck bndCheck;
     private Renderer rend;
+    public WeaponDefinition weaponDef;
 
     [Header("Set Dynamically")]
     public Rigidbody rigid;
@@ -39,6 +40,8 @@ public class Projectile : MonoBehaviour {
         }
     }
 
+    
+
     ///<summary>
     /// Sets the _type private field and colors this projectile to match the
     /// WeaponDefinition.
@@ -50,5 +53,7 @@ public class Projectile : MonoBehaviour {
         _type = eType;
         WeaponDefinition def = Main.GetWeaponDefinition(_type);
         rend.material.color = def.projectileColor;
+
+        
     }
 }

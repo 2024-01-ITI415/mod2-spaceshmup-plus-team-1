@@ -32,9 +32,10 @@ public class WeaponDefinition
     public Color projectileColor = Color.white;
     public float damageOnHit = 0; // Amount of damage caused
     public float continuousDamage = 0; // Damage per second (Laser)
-    public float continuousDamageDuration = 2f;
+    public float continuousDamageDuration = 2.0f;
     public float delayBetweenShots = 0;
     public float velocity = 20; // Speed of projectiles
+
 }
 public class Weapon : MonoBehaviour {
     static public Transform PROJECTILE_ANCHOR;
@@ -46,6 +47,7 @@ public class Weapon : MonoBehaviour {
     public GameObject collar;
     public float lastShotTime; // Time last shot was fired
     private Renderer collarRend;
+
 
     private void Start()
     {
@@ -94,10 +96,15 @@ public class Weapon : MonoBehaviour {
         {
             this.gameObject.SetActive(true);
         }
+
+        
         def = Main.GetWeaponDefinition(_type);
         collarRend.material.color = def.color;
         lastShotTime = 0; // You can fire immediately after _type is set.
+
     }
+
+   
 
     public void Fire()
     {
@@ -132,8 +139,14 @@ public class Weapon : MonoBehaviour {
                 p.transform.rotation = Quaternion.AngleAxis(-10, Vector3.back);
                 p.rigid.velocity = p.transform.rotation * vel;
                 break;
+
+           
         }
     }
+
+   
+
+
 
     public Projectile MakeProjectile()
     {
@@ -149,9 +162,14 @@ public class Weapon : MonoBehaviour {
             go.layer = LayerMask.NameToLayer("ProjectileEnemy");
         }
         go.transform.position = collar.transform.position;
+
+     
+
         go.transform.SetParent(PROJECTILE_ANCHOR, true);
         Projectile p = go.GetComponent<Projectile>();
         p.type = type;
+        p.weaponDef = def;
+
         lastShotTime = Time.time;
         return p;
     }

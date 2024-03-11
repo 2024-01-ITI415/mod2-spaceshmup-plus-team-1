@@ -87,32 +87,38 @@ public class Enemy : MonoBehaviour {
                 ShowDamage();
                 // Get the damage amount from the Main WEAP_DICT
                 health -= Main.GetWeaponDefinition(p.type).damageOnHit;
-                if(health <= 0)
-                {
-                    // Tell the Main singleton that this ship was destroyed
-                    if (!notifiedOfDestruction)
+                
+                    if (health <= 0)
                     {
-                        Main.S.ShipDestroyed(this);
+                        // Tell the Main singleton that this ship was destroyed
+                        if (!notifiedOfDestruction)
+                        {
+                            Main.S.ShipDestroyed(this);
+                        }
+                        notifiedOfDestruction = true;
+                        // Destroy this enemy
+                        Destroy(this.gameObject);
                     }
-                    notifiedOfDestruction = true;
-                    // Destroy this enemy
-                    Destroy(this.gameObject);
-                }
-                Destroy(otherGO);
-                break;
+                    Destroy(otherGO);
+                    break;
 
-            default:
+                    default:
                 print("Enemy hit by non-ProjectileHero: " + otherGO.name);
-                break;
-        }
+                    break;
+                }
     }
+
+   
 
     void ShowDamage()
     {
-        foreach (Material m in materials)
-        {
-            m.color = Color.red;
-        }
+       
+            foreach (Material m in materials)
+            {
+                m.color = Color.red;
+            }
+        
+            
         showingDamage = true;
         damageDoneTime = Time.time + showDamageDuration;
     }
