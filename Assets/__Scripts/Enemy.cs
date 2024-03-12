@@ -19,7 +19,48 @@ public class Enemy : MonoBehaviour {
     public float damageDoneTime; // Time to stop showing damage
     public bool notifiedOfDestruction = false; // Will be used later
 
+    private float continuousDamage;
+    private float continuousDamageDuration;
     protected BoundsCheck bndCheck;
+
+    public void ApplyContinuousDamage(float damagePerSecond, float duration)
+    {
+        continuousDamage = damagePerSecond;
+        continuousDamageDuration = duration;
+        StartCoroutine(ContinuousDamageEffect());
+    }
+
+    private IEnumerator ContinuousDamageEffect()
+    {
+        float endTime = Time.time + continuousDamageDuration;
+
+        while (Time.time < endTime)
+        {
+            health -= continuousDamage * Time.deltaTime;
+
+            // Check if the enemy has been destroyed
+            if (health <= 0)
+            {
+                HandleDestruction();
+                break;
+            }
+
+            yield return null;
+        }
+    }
+
+    private void HandleDestruction()
+    {
+        // Handle destruction logic here
+        if (!notifiedOfDestruction)
+        {
+            Main.S.ShipDestroyed(this);
+        }
+        notifiedOfDestruction = true;
+
+        // Destroy this enemy
+        Destroy(gameObject);
+    }
 
     private void Awake()
     {
@@ -85,9 +126,18 @@ public class Enemy : MonoBehaviour {
 
                 // Hurt this Enemy
                 ShowDamage();
-                // Get the damage amount from the Main WEAP_DICT
-                health -= Main.GetWeaponDefinition(p.type).damageOnHit;
-                
+                // Check if the projectile is a laser
+                if (p.type == WeaponType.laser)
+                {
+                    // Apply continuous damage for the laser
+                    ApplyContinuousDamage(Main.GetWeaponDefinition(p.type).laserDamagePerSecond, Main.GetWeaponDefinition(p.type).laserDuration);
+                }
+                else
+                {
+                    // Get the damage amount from the Main WEAP_DICT
+                    health -= Main.GetWeaponDefinition(p.type).damageOnHit;
+
+
                     if (health <= 0)
                     {
                         // Tell the Main singleton that this ship was destroyed
@@ -99,6 +149,7 @@ public class Enemy : MonoBehaviour {
                         // Destroy this enemy
                         Destroy(this.gameObject);
                     }
+                }
                     Destroy(otherGO);
                     break;
 

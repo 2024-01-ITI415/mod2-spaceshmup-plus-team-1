@@ -12,6 +12,11 @@ public class Projectile : MonoBehaviour {
     public Rigidbody rigid;
     [SerializeField]
     private WeaponType _type;
+    public bool isMissile = false;
+    public float trackingSpeed = 1.0f;
+    public Transform target;
+    private float laserDamage; // Damage per second for the laser
+
 
     // This public property masks the field _type and takes action when it is set
     public WeaponType type
@@ -30,6 +35,7 @@ public class Projectile : MonoBehaviour {
         bndCheck = GetComponent<BoundsCheck>();
         rend = GetComponent<Renderer>();
         rigid = GetComponent<Rigidbody>();
+        laserDamage = 0f;
     }
 
     private void Update()
@@ -37,6 +43,14 @@ public class Projectile : MonoBehaviour {
         if (bndCheck.offUp)
         {
             Destroy(gameObject);
+        }
+
+        if (isMissile && target != null)
+        {
+            Vector3 direction = (target.position - transform.position).normalized;
+            Quaternion rotation = Quaternion.LookRotation(direction);
+            rigid.velocity = direction * trackingSpeed;
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation, trackingSpeed * Time.deltaTime);
         }
     }
 
@@ -54,6 +68,21 @@ public class Projectile : MonoBehaviour {
         WeaponDefinition def = Main.GetWeaponDefinition(_type);
         rend.material.color = def.projectileColor;
 
-        
+        if (type == WeaponType.missile)
+        {
+            trackingSpeed = def.trackingSpeed;
+        }
+
+        if (type == WeaponType.laser)
+        {
+            rend.material.color = def.projectileColor;
+            laserDamage = def.laserDamagePerSecond;
+        }
+
+    }
+
+    public void SetMissileTarget(Transform newTarget)
+    {
+        target = newTarget;
     }
 }

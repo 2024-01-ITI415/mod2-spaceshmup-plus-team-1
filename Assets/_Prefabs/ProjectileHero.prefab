@@ -147,8 +147,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2267daa91a84274b9775b2752007efd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weaponDef:
+    type: 0
+    letter: 
+    color: {r: 1, g: 1, b: 1, a: 1}
+    projectilePrefab: {fileID: 0}
+    projectileColor: {r: 1, g: 1, b: 1, a: 1}
+    damageOnHit: 0
+    continuousDamage: 0
+    continuousDamageDuration: 2
+    delayBetweenShots: 0
+    velocity: 20
+    trackingSpeed: 1
   rigid: {fileID: 0}
   _type: 0
+  isMissile: 0
+  trackingSpeed: 1
+  target: {fileID: 0}
 --- !u!114 &114414417478664330
 MonoBehaviour:
   m_ObjectHideFlags: 0

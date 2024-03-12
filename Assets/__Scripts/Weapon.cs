@@ -31,10 +31,13 @@ public class WeaponDefinition
     public GameObject projectilePrefab; // Prefab for projectiles
     public Color projectileColor = Color.white;
     public float damageOnHit = 0; // Amount of damage caused
-    public float continuousDamage = 0; // Damage per second (Laser)
-    public float continuousDamageDuration = 2.0f;
     public float delayBetweenShots = 0;
-    public float velocity = 20; // Speed of projectiles
+    public float velocity = 20; // Speed of projectiles  
+    public float trackingSpeed = 1.0f;
+    public float laserScaleIncrease = 80.0f; // Y-scale increase for the laser projectile
+    public float laserDamagePerSecond = 5.0f; // Damage per second for the laser
+    public float laserDuration = 2.0f; // Duration of laser damage
+
 
 }
 public class Weapon : MonoBehaviour {
@@ -97,14 +100,25 @@ public class Weapon : MonoBehaviour {
             this.gameObject.SetActive(true);
         }
 
-        
+       
+
         def = Main.GetWeaponDefinition(_type);
         collarRend.material.color = def.color;
         lastShotTime = 0; // You can fire immediately after _type is set.
 
+        if (type == WeaponType.missile)
+        {
+            // Activate FindNearestEnemy when the missile type is set
+            GameObject nearestEnemy = FindNearestEnemy();
+            if (nearestEnemy != null)
+            {
+                MissileActivated(nearestEnemy.transform);
+            }
+        }
+
     }
 
-   
+    private float laserEffectTime; // Time when the laser effect should end
 
     public void Fire()
     {
@@ -140,13 +154,126 @@ public class Weapon : MonoBehaviour {
                 p.rigid.velocity = p.transform.rotation * vel;
                 break;
 
-           
+            case WeaponType.missile:
+                MissileActivated();  
+                break;
+
+            case WeaponType.laser:
+                LaserActivated();
+                break;
         }
     }
 
-   
+    private void MissileActivated()
+    {
+        // Find the nearest enemy and make the missile track it
+        GameObject nearestEnemy = FindNearestEnemy();
+        if (nearestEnemy != null)
+        {
+            MissileActivated(nearestEnemy.transform);
+        }
+    }
+
+    private void MissileActivated(Transform target)
+    {
+        Projectile missile = MakeProjectile();
+        missile.rigid.velocity = Vector3.up * def.velocity;
+
+        if (target != null)
+        {
+            missile.isMissile = true;
+            missile.target = target;
+        }
+    }
 
 
+
+    private GameObject FindNearestEnemy()
+    {
+        
+
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        if (enemies.Length > 0)
+        {
+            GameObject nearestEnemy = enemies[0];
+            float nearestDistance = Vector3.Distance(transform.position, nearestEnemy.transform.position);
+
+            foreach (GameObject enemy in enemies)
+            {
+                float distance = Vector3.Distance(transform.position, enemy.transform.position);
+                if (distance < nearestDistance)
+                {
+                    nearestDistance = distance;
+                    nearestEnemy = enemy;
+                }
+            }
+
+            return nearestEnemy;
+        }
+
+        return null;
+    }
+
+    private void LaserActivated()
+    {
+        // Activate the laser effect
+        laserEffectTime = Time.time + def.laserDuration;
+        Projectile laserProjectile = MakeProjectile();
+        // Set the type for the laser projectile
+        laserProjectile.type = WeaponType.laser;
+        laserProjectile.transform.position = collar.transform.position;
+        laserProjectile.transform.up = collar.transform.up;
+
+        StartCoroutine(LaserEffect());
+    }
+
+    private IEnumerator LaserEffect()
+    {
+        float damagePerSecond = def.laserDamagePerSecond;
+        float duration = def.laserDuration;
+
+        // Get the laser projectile created by MakeProjectile()
+        Projectile laserProjectile = PROJECTILE_ANCHOR.GetChild(PROJECTILE_ANCHOR.childCount - 1).GetComponent<Projectile>();
+
+        while (Time.time < laserEffectTime)
+        {
+            // Apply continuous damage to enemies within the laser
+            RaycastHit[] hits = Physics.RaycastAll(collar.transform.position, collar.transform.up, 100f);
+            foreach (RaycastHit hit in hits)
+            {
+                if (hit.collider.CompareTag("Enemy"))
+                {
+                    Enemy enemy = hit.collider.GetComponent<Enemy>();
+                    if (enemy != null)
+                    {
+                        enemy.ApplyContinuousDamage(damagePerSecond, duration);
+                    }
+                }
+            }
+
+            // Update the position of the laser projectile to match the collar
+            laserProjectile.transform.position = collar.transform.position;
+
+            // Extend the y scale of the laser projectile
+            Vector3 newScale = laserProjectile.transform.localScale;
+            newScale.y += def.laserScaleIncrease * Time.deltaTime;
+            laserProjectile.transform.localScale = newScale;
+
+            yield return null;
+        }
+
+        // Deactivate the laser effect
+        ResetLaser();
+    }
+
+    private void ResetLaser()
+    {
+        // Reset the y scale of the laser projectile
+        Projectile laserProjectile = PROJECTILE_ANCHOR.GetChild(PROJECTILE_ANCHOR.childCount - 1).GetComponent<Projectile>();
+        Vector3 newScale = laserProjectile.transform.localScale;
+        newScale.y = 1.0f;
+        laserProjectile.transform.localScale = newScale;
+    }
 
     public Projectile MakeProjectile()
     {
@@ -161,6 +288,8 @@ public class Weapon : MonoBehaviour {
             go.tag = "ProjectileEnemy";
             go.layer = LayerMask.NameToLayer("ProjectileEnemy");
         }
+
+        
         go.transform.position = collar.transform.position;
 
      
